@@ -1,0 +1,22 @@
+{
+  "cars": [
+    {
+      "id": "1",
+      "make": "Toyota",
+      "model": "Corolla",
+      "year": 2024
+    },
+    {
+      "id": "2",
+      "make": "Honda",
+      "model": "Civic",
+      "year": 2021
+    },
+    {
+      "id": "9c59",
+      "make": "Esse delectus earu",
+      "model": "Occaecat officia nos",
+      "year": 2011
+    }
+  ]
+}

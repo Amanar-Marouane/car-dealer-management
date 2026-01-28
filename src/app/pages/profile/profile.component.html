@@ -1,0 +1,8 @@
+<div class="profile-container" *ngIf="user">
+  <img [src]="user.image" alt="Avatar" class="profile-avatar" />
+  <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+  <div class="profile-username">@{{ user.username }}</div>
+  <div class="profile-email">{{ user.email }}</div>
+  <button class="profile-logout" (click)="logout()">Logout</button>
+  <button class="profile-cars" routerLink="/cars">See Cars</button>
+</div>
