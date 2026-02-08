@@ -1,64 +1,364 @@
 .cars-container {
-  max-width: 800px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+  max-width: 1400px;
+  margin: 0 auto;
   padding: 24px;
-}
-
-.car-form {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 24px;
-}
-
-.car-form input {
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 15px;
-}
-
-.car-form button {
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 16px;
-  cursor: pointer;
-}
-
-.cars-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.cars-table th,
-.cars-table td {
-  padding: 8px 10px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-
-.cars-table th {
+  min-height: 100vh;
   background: #f5f5f5;
 }
 
-.cars-table button {
-  margin-right: 6px;
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
-  padding: 4px 10px;
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 28px;
+}
+
+h3 {
+  color: #555;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+}
+
+/* Messages */
+.error-message {
+  color: #d32f2f;
+  background: #ffebee;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #d32f2f;
+  animation: slideDown 0.3s ease;
+}
+
+.success-message {
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #2e7d32;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  font-size: 18px;
+}
+
+/* Form Styles */
+.car-form,
+.edit-card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.car-form .form-row:last-child,
+.edit-card .form-row:last-child {
+  margin-bottom: 0;
+}
+
+.form-row.checkbox-row {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.form-row input,
+.form-row select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-row input:focus,
+.form-row select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.form-row input:disabled,
+.form-row select:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-row label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+}
+
+.form-row label input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
   cursor: pointer;
 }
 
-.cars-table button:last-child {
-  background: #d32f2f;
+.car-form button,
+.edit-actions button {
+  padding: 10px 20px;
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
 }
 
-.cars-table button:hover {
-  opacity: 0.85;
+.car-form button {
+  grid-column: 1 / -1;
+  margin-top: 8px;
+}
+
+.car-form button:hover:not(:disabled) {
+  background: #1565c0;
+  transform: translateY(-1px);
+}
+
+.car-form button:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Cars Grid */
+.cars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.car-card {
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.car-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.car-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background: #f0f0f0;
+  display: block;
+}
+
+.car-info {
+  padding: 20px;
+}
+
+.car-info h4 {
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 18px;
+  word-break: break-word;
+}
+
+.car-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.car-details p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.car-details strong {
+  color: #333;
+}
+
+.available {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.unavailable {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.car-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.car-actions button,
+.edit-actions button {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.car-actions button:hover:not(:disabled),
+.edit-actions button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.car-actions button:disabled,
+.edit-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.edit-btn {
+  background: #1976d2;
+  color: #fff;
+}
+
+.edit-btn:hover:not(:disabled) {
+  background: #1565c0;
+}
+
+.delete-btn {
+  background: #d32f2f;
+  color: #fff;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #b71c1c;
+}
+
+/* Edit Card */
+.edit-card {
+  padding: 20px;
+}
+
+.edit-card h4 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 16px;
+  word-break: break-word;
+}
+
+.edit-card input,
+.edit-card select {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.edit-card input:focus,
+.edit-card select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.edit-card input:disabled,
+.edit-card select:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.save-btn {
+  background: #2e7d32;
+  color: #fff;
+  flex: 1;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #1b5e20;
+}
+
+.cancel-btn {
+  background: #888;
+  color: #fff;
+  flex: 1;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #666;
+}
+
+/* No Cars Message */
+.no-cars {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cars-container {
+    padding: 16px;
+  }
+
+  .cars-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row.checkbox-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .car-form,
+  .edit-card {
+    padding: 16px;
+  }
 }

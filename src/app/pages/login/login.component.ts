@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil, finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -11,21 +13,44 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-export class LoginComponent {
-  username = 'emilys';
-  password = 'emilyspass';
+export class LoginComponent implements OnDestroy {
+  username = 'admin';
+  password = 'admin123';
   error = '';
+  loading = false;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private auth: AuthService,
     private router: Router,
   ) {}
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   onLogin() {
     this.error = '';
-    this.auth.login(this.username, this.password).subscribe({
-      next: () => this.router.navigate(['/profile']),
-      error: () => (this.error = 'Invalid credentials'),
-    });
+    this.loading = true;
+    this.auth
+      .login(this.username, this.password)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.loading = false;
+        }),
+      )
+      .subscribe({
+        next: (response) => {
+          console.log('Login successful:', response);
+          this.router.navigate(['/cars']);
+        },
+        error: (err) => {
+          this.error = err.error?.message || 'Invalid credentials';
+          console.error('Login error:', err);
+        },
+      });
   }
 }

@@ -10,6 +10,13 @@ form {
   gap: 18px;
 }
 
+h2 {
+  text-align: center;
+  color: #333;
+  margin: 0 0 10px 0;
+  font-size: 24px;
+}
+
 input[type='text'],
 input[type='password'] {
   padding: 10px 12px;
@@ -25,6 +32,11 @@ input[type='password']:focus {
   border-color: #1976d2;
 }
 
+input:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
 button[type='submit'] {
   padding: 10px 0;
   background: #1976d2;
@@ -36,13 +48,27 @@ button[type='submit'] {
   transition: background 0.2s;
 }
 
-button[type='submit']:hover {
+button[type='submit']:hover:not(:disabled) {
   background: #1565c0;
 }
 
-.login-footer {
-  text-align: center;
-  margin-top: 40px;
-  color: #888;
+button[type='submit']:disabled {
+  background: #90caf9;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #d32f2f;
   font-size: 14px;
+  text-align: center;
+  padding: 8px;
+  background: #ffebee;
+  border-radius: 4px;
+}
+
+.hint {
+  text-align: center;
+  color: #888;
+  font-size: 12px;
+  margin: 0;
 }

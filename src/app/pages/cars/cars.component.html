@@ -1,41 +1,191 @@
 <div class="cars-container">
-  <h2>Cars List</h2>
+  <h2>Gestion des Voitures</h2>
+
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+  <!-- Add Car Form -->
   <form (ngSubmit)="addCar()" class="car-form">
-    <input [(ngModel)]="newCar.make" name="make" placeholder="Make" required />
-    <input [(ngModel)]="newCar.model" name="model" placeholder="Model" required />
-    <input [(ngModel)]="newCar.year" name="year" type="number" placeholder="Year" required />
-    <button type="submit">Add Car</button>
+    <h3>Ajouter une nouvelle voiture</h3>
+    <div class="form-row">
+      <input
+        [(ngModel)]="newCar.marque"
+        name="marque"
+        placeholder="Marque"
+        required
+        [disabled]="submitting || editCarId !== null"
+      />
+      <input
+        [(ngModel)]="newCar.modele"
+        name="modele"
+        placeholder="Modèle"
+        required
+        [disabled]="submitting || editCarId !== null"
+      />
+    </div>
+    <div class="form-row">
+      <input
+        [(ngModel)]="newCar.prix"
+        name="prix"
+        type="number"
+        placeholder="Prix"
+        required
+        [disabled]="submitting || editCarId !== null"
+      />
+      <select
+        [(ngModel)]="newCar.carburant"
+        name="carburant"
+        required
+        [disabled]="submitting || editCarId !== null"
+      >
+        <option *ngFor="let fuel of carburantOptions" [value]="fuel">{{ fuel }}</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <input
+        [(ngModel)]="newCar.imageUrl"
+        name="imageUrl"
+        placeholder="URL de l'image"
+        [disabled]="submitting || editCarId !== null"
+      />
+      <input
+        [(ngModel)]="newCar.dateMiseEnVente"
+        name="dateMiseEnVente"
+        type="date"
+        required
+        [disabled]="submitting || editCarId !== null"
+      />
+    </div>
+    <div class="form-row checkbox-row">
+      <label>
+        <input
+          [(ngModel)]="newCar.disponible"
+          name="disponible"
+          type="checkbox"
+          [disabled]="submitting || editCarId !== null"
+        />
+        Disponible
+      </label>
+      <button type="submit" [disabled]="submitting || editCarId !== null">
+        {{ submitting ? 'Ajout en cours...' : 'Ajouter' }}
+      </button>
+    </div>
   </form>
-  <table class="cars-table">
-    <thead>
-      <tr>
-        <th>Make</th>
-        <th>Model</th>
-        <th>Year</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let car of cars">
-        <ng-container *ngIf="editCarId !== car.id; else editRow">
-          <td>{{ car.make }}</td>
-          <td>{{ car.model }}</td>
-          <td>{{ car.year }}</td>
-          <td>
-            <button (click)="startEdit(car)">Edit</button>
-            <button (click)="deleteCar(car.id!)">Delete</button>
-          </td>
-        </ng-container>
-        <ng-template #editRow>
-          <td><input [(ngModel)]="editCar.make" name="editMake{{ car.id }}" /></td>
-          <td><input [(ngModel)]="editCar.model" name="editModel{{ car.id }}" /></td>
-          <td><input [(ngModel)]="editCar.year" name="editYear{{ car.id }}" type="number" /></td>
-          <td>
-            <button (click)="saveEdit()">Save</button>
-            <button (click)="cancelEdit()">Cancel</button>
-          </td>
-        </ng-template>
-      </tr>
-    </tbody>
-  </table>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">Chargement des voitures...</div>
+
+  <!-- No Cars Message -->
+  <div *ngIf="!loading && cars.length === 0" class="no-cars">
+    <p>Aucune voiture trouvée. Ajoutez-en une pour commencer!</p>
+  </div>
+
+  <!-- Cars Grid -->
+  <div class="cars-grid" *ngIf="!loading && cars.length > 0">
+    <div *ngFor="let car of cars" class="car-card">
+      <!-- View Mode -->
+      <ng-container *ngIf="editCarId !== car.id; else editCard">
+        <img
+          [src]="car.imageUrl"
+          [alt]="car.marque"
+          class="car-image"
+          onerror="this.src = 'https://via.placeholder.com/400x200?text=No+Image'"
+        />
+        <div class="car-info">
+          <h4>{{ car.marque }} {{ car.modele }}</h4>
+          <div class="car-details">
+            <p><strong>Prix:</strong> {{ car.prix | currency: 'EUR' }}</p>
+            <p><strong>Carburant:</strong> {{ car.carburant }}</p>
+            <p>
+              <strong>Date mise en vente:</strong> {{ car.dateMiseEnVente | date: 'dd/MM/yyyy' }}
+            </p>
+            <p>
+              <strong>Disponible:</strong>
+              <span [class.available]="car.disponible" [class.unavailable]="!car.disponible">
+                {{ car.disponible ? 'Oui' : 'Non' }}
+              </span>
+            </p>
+          </div>
+          <div class="car-actions">
+            <button (click)="startEdit(car)" class="edit-btn" [disabled]="submitting">
+              Modifier
+            </button>
+            <button (click)="deleteCar(car.id!)" class="delete-btn" [disabled]="submitting">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Edit Mode -->
+      <ng-template #editCard>
+        <div class="edit-card">
+          <h4>Modifier: {{ car.marque }} {{ car.modele }}</h4>
+          <div class="form-row">
+            <input
+              [(ngModel)]="editCar.marque"
+              name="editMarque{{ car.id }}"
+              placeholder="Marque"
+              [disabled]="submitting"
+            />
+            <input
+              [(ngModel)]="editCar.modele"
+              name="editModele{{ car.id }}"
+              placeholder="Modèle"
+              [disabled]="submitting"
+            />
+          </div>
+          <div class="form-row">
+            <input
+              [(ngModel)]="editCar.prix"
+              name="editPrix{{ car.id }}"
+              type="number"
+              placeholder="Prix"
+              [disabled]="submitting"
+            />
+            <select
+              [(ngModel)]="editCar.carburant"
+              name="editCarburant{{ car.id }}"
+              [disabled]="submitting"
+            >
+              <option *ngFor="let fuel of carburantOptions" [value]="fuel">{{ fuel }}</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <input
+              [(ngModel)]="editCar.imageUrl"
+              name="editImageUrl{{ car.id }}"
+              placeholder="URL de l'image"
+              [disabled]="submitting"
+            />
+            <input
+              [(ngModel)]="editCar.dateMiseEnVente"
+              name="editDate{{ car.id }}"
+              type="date"
+              [disabled]="submitting"
+            />
+          </div>
+          <div class="form-row checkbox-row">
+            <label>
+              <input
+                [(ngModel)]="editCar.disponible"
+                name="editDisponible{{ car.id }}"
+                type="checkbox"
+                [disabled]="submitting"
+              />
+              Disponible
+            </label>
+          </div>
+          <div class="edit-actions">
+            <button (click)="saveEdit()" class="save-btn" [disabled]="submitting">
+              {{ submitting ? 'Enregistrement...' : 'Enregistrer' }}
+            </button>
+            <button (click)="cancelEdit()" class="cancel-btn" [disabled]="submitting">
+              Annuler
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 </div>
